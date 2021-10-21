@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <title>HomePage</title>
+    </head>
+    <body>
+        <form action="/" method="post" enctype="multipart/form-data">
+            <label for="picture">Votre Photo</label>
+            <input type="file" name="picture" id="picture" required>
+            <label for="title">Votre Titre</label>
+            <input type="text" name="title" id="title" required>
+            <label for="desc">Votre Description</label>
+            <input type="text" name="desc" id="desc" required>
+            <input type="submit" value="Poster">
+        </form>
+        <hr>
+        {{#results}}
+            <div class="picture">
+                <img width="100" src={{results['picture']}} alt="image">
+                <h2>{{results['title']}}</h2>
+                <p>{{results['description']}}</p>
+            </div>
+        {{/results}}
+    </body>
+</html>
