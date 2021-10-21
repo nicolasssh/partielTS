@@ -6,6 +6,8 @@ const {createConnection, createConnections, Connection, getConnection}  =  requi
 const bodyParser = require('body-parser')
 const fileUpload = require('express-fileupload')
 const mustacheExpress = require('mustache-express')
+const { send } = require('express/lib/response')
+const serve   = require('express-static')
 
 let port = 3000
 
@@ -45,6 +47,7 @@ app.use(fileUpload({
 app.engine('mustache', mustacheExpress());
 app.set('view engine', 'mustache');
 app.set( 'views', __dirname + '/views' );
+app.use(express.static(path.join(__dirname)));
 
 app.get('/', async (req, res, next) => {
     const connection = await getConnection()
@@ -53,11 +56,8 @@ app.get('/', async (req, res, next) => {
         if (error) {
             return res.status(500, 'Erreur lors de la connexion à la base de données.')
         }
-        for (var i = 0, len = results.length; i < len; ++i) {
-            var sqlResult = results[i];
-            console.log(sqlResult['picture'], sqlResult['title'], sqlResult['descr']);
-        }
-        res.render('home', { results: sqlResult })
+        results = results.map((ult) => {return { picture : ult.picture , descr : ult.descr , title : ult.title }})
+        res.render('home', { results: results })
     })
 })
 
@@ -71,7 +71,7 @@ app.post('/', async (req, res, next) => {
         res.send('Fichier upload');
     })
     const connection = await getConnection()
-    connection.query(`INSERT INTO pictures (picture, title, descr) VALUES ('./picture/${req.files.picture.name}', '${req.body.title}', '${req.body.descr}')`, function (error, results, fields) {
+    connection.query(`INSERT INTO pictures (picture, title, descr) VALUES ('./picture/${req.files.picture.name}', '${req.body.title}', '${req.body.desc}')`, function (error, results, fields) {
         if (error) {
             console.log(error)
         } else {
